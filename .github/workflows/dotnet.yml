@@ -36,13 +36,17 @@ jobs:
     # A file, directory or wildcard pattern that describes what to upload
         path: |
           **\*.nupkg
+    - name: GitHub Releases
+  # You may pin to the exact commit or the version.
+  # uses: fnkr/github-action-ghr@96b1448dc6162f370067e1de51e856e733a76b4f
+      uses: fnkr/github-action-ghr@v1.3      
     - name: Publish NuGet
   # You may pin to the exact commit or the version.
   # uses: brandedoutcast/publish-nuget@c12b8546b67672ee38ac87bea491ac94a587f7cc
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
     # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: .
+        PROJECT_FILE_PATH: MauiAudio.csproj
     # NuGet package id, used for version detection & defaults to project name
     #    PACKAGE_NAME: # optional
     # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
