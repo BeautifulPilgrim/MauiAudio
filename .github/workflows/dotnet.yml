@@ -27,7 +27,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet pack --no-restore
+      run: dotnet pack --no-restore --configuration Release
       
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1.0.6
@@ -35,9 +35,13 @@ jobs:
 #    - name: 添加github仓库
  #     run: |
  #       nuget sources add -name github -Source https://nuget.pkg.github.com/BeautifulPilgrim/index.json -Username BeautifulPilgrim -Password ${{ secrets.GitHubToken }}
- #   - name: 发布生成包到github和nuget
- #     run: |
- #       nuget push ./bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
+    - name: list
+      run: |
+        dir list ./bin/Release
+    - name: 发布生成包到github和nuget
+      run: |
+        nuget push **/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
+        nuget push ./bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
  #       nuget push ./bin/Release/*.nupkg -Source github -SkipDuplicate
         
     - name: Publish NuGet
