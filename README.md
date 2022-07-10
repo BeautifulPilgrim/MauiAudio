@@ -1,4 +1,7 @@
 # MauiAudio-Cross platform audio plugin for MAUI
+
+[![.NET](https://github.com/BeautifulPilgrim/MauiAudio/actions/workflows/dotnet.yml/badge.svg)](https://github.com/BeautifulPilgrim/MauiAudio/actions/workflows/dotnet.yml)
+
 Based from [.NET Podcasts - Sample Application](https://github.com/microsoft/dotnet-podcasts#net-podcasts---sample-application)
 
 
