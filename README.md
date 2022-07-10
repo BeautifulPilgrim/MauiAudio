@@ -4,8 +4,15 @@
 
 Based from [.NET Podcasts - Sample Application](https://github.com/microsoft/dotnet-podcasts#net-podcasts---sample-application)
 
+## Installation
 
-# Usage
+Add the [NuGet package](https://www.nuget.org/packages/Plugin.MauiAudio/) to the projects you want to use it in.
+
+- Select the Browse tab, search for Plugin.MauiAudio
+- Select Plugin.MauiAudio
+
+
+## Usage
 
 ```c#
 private readonly INativeAudioService audioService;

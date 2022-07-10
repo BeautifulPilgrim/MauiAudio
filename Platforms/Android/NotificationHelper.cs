@@ -8,7 +8,6 @@ using static Android.App.Notification;
 using static Android.Resource;
 using AndroidMedia = Android.Media;
 
-
 namespace MauiAudio.Platforms.Android;
 
 public static class NotificationHelper
