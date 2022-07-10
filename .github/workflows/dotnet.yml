@@ -37,7 +37,7 @@ jobs:
  #       nuget sources add -name github -Source https://nuget.pkg.github.com/BeautifulPilgrim/index.json -Username BeautifulPilgrim -Password ${{ secrets.GitHubToken }}
     - name: list
       run: |
-        dir list ./bin/Release
+        dir ./bin/Release
     - name: 发布生成包到github和nuget
       run: |
         nuget push **/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
