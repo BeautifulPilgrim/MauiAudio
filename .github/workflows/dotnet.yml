@@ -26,8 +26,8 @@ jobs:
           & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
     - name: Restore dependencies
       run: dotnet restore
-#    - name: Build
-#      run: dotnet pack --no-restore --configuration Release
+    - name: Build
+      run: dotnet pack --no-restore --configuration Release
       
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1.0.6
