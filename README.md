@@ -1,8 +1,10 @@
 # MauiAudio-Cross platform audio plugin for MAUI
 
-[![.NET](https://github.com/BeautifulPilgrim/MauiAudio/actions/workflows/dotnet.yml/badge.svg)](https://github.com/BeautifulPilgrim/MauiAudio/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/BeautifulPilgrim/MauiAudio/actions/workflows/dotnet.yml/badge.svg)](https://github.com/BeautifulPilgrim/MauiAudio/actions/workflows/dotnet.yml)![Nuget](https://img.shields.io/nuget/v/Plugin.MauiAudio)![Nuget](https://img.shields.io/nuget/dt/Plugin.MauiAudio)
 
 Based from [.NET Podcasts - Sample Application](https://github.com/microsoft/dotnet-podcasts#net-podcasts---sample-application)
+
+A code novice, please forgive me if the documentation or code is not standardized. If you can help improve it, I would be very grateful!
 
 ## Installation
 
@@ -42,5 +44,20 @@ await audioService.InitializeAsync(media);
 await InternalPlayAsync(position);
 # pause
 await audioService.PauseAsync();
+```
+
+## Notify
+
+If you want to process the player's previous or next song:(only Android available now)
+
+```c#
+MessagingCenter.Instance.Subscribe<string>("PlayerService","Next", async (sender) =>
+        {
+            # code
+        });
+MessagingCenter.Instance.Subscribe<string>("PlayerService", "PREVIOUS", async (sender) =>
+        {
+            # code
+        });
 ```
 
