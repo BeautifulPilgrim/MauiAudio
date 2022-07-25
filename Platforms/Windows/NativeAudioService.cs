@@ -102,7 +102,7 @@ public class NativeAudioService : INativeAudioService
             mediaPlayer.CommandManager.PauseReceived += CommandManager_PauseReceived;
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
-        if (mediaPlayer != null)
+        else
         {
             await PauseAsync();
             mediaPlayer.Source = mediaPlaybackItem(media);
