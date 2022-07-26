@@ -6,14 +6,16 @@ namespace MauiAudio.Platforms.MacCatalyst;
 
 public class NativeAudioService : INativeAudioService
 {
-    AVPlayer avPlayer;
+    //AVPlayer avPlayer;
+    AVAudioPlayer avPlayer;
     string _uri;
 
     public bool IsPlaying => avPlayer != null
-        ? avPlayer.TimeControlStatus == AVPlayerTimeControlStatus.Playing
+        ? avPlayer.Playing
         : false;
 
-    public double CurrentPosition => avPlayer?.CurrentTime.Seconds ?? 0;
+    public double CurrentPosition => avPlayer?.CurrentTime ?? 0;
+    public double Duration => avPlayer?.Duration ?? 0;
     public event EventHandler<bool> IsPlayingChanged;
 
     public async Task InitializeAsync(string audioURI)
@@ -28,22 +30,24 @@ public class NativeAudioService : INativeAudioService
         return Task.CompletedTask;
     }
 
-    public async Task PlayAsync(double position = 0)
+    public Task PlayAsync(double position = 0)
     {
-        await avPlayer.SeekAsync(new CoreMedia.CMTime((long)position, 1));
+        avPlayer.PlayAtTime(position);
         avPlayer?.Play();
+        return Task.CompletedTask;
     }
 
     public Task SetCurrentTime(double value)
     {
-        return avPlayer.SeekAsync(new CoreMedia.CMTime((long)value, 1));
+        avPlayer.PlayAtTime(value);
+        return Task.CompletedTask;
     }
 
     public Task SetMuted(bool value)
     {
         if (avPlayer != null)
         {
-            avPlayer.Muted = value;
+            avPlayer.Volume = value ? 100 : 0;
         }
 
         return Task.CompletedTask;
@@ -66,7 +70,7 @@ public class NativeAudioService : INativeAudioService
     }
 
     public async Task InitializeAsync(MediaPlay media)
-{
+    {
         _uri = media.URL;
         NSUrl fileURL = new NSUrl(_uri.ToString());
 
@@ -75,6 +79,9 @@ public class NativeAudioService : INativeAudioService
             await PauseAsync();
         }
 
-        avPlayer = new AVPlayer(fileURL);
+        avPlayer = AVAudioPlayer.FromUrl(fileURL);
+        avPlayer.FinishedPlaying += delegate (object sender, AVStatusEventArgs e) {
+            MessagingCenter.Instance.Send("PlayerService", "Next");
+        };
     }
 }
