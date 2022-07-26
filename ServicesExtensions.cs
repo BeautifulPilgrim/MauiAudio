@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MauiAudio;
 
-public static class ServicesExtensions
+public static class AppBuilderExtensions
 {
     public static MauiAppBuilder UseMauiAudio(this MauiAppBuilder builder)
     {

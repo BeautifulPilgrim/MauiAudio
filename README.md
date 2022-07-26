@@ -16,15 +16,9 @@ Add the [NuGet package](https://www.nuget.org/packages/Plugin.MauiAudio/) to the
 ## Init
 In CreateMauiApp():
 ```c#
-#if WINDOWS
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Windows.NativeAudioService>();
-#elif ANDROID
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Android.NativeAudioService>();
-#elif MACCATALYST
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.MacCatalyst.NativeAudioService>();
-#elif IOS
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.iOS.NativeAudioService>();
-#endif
+using MauiAudio;
+
+builder.UseMauiAudio()
 ```
 ### Android
 ```c#
