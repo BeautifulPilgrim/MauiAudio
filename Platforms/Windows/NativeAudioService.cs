@@ -11,7 +11,7 @@ public class NativeAudioService : INativeAudioService
 
     public bool IsPlaying => mediaPlayer != null
         && mediaPlayer.CurrentState == MediaPlayerState.Playing;
-
+    public double Duration => mediaPlayer?.NaturalDuration.TotalSeconds ?? 0;
     public double CurrentPosition => mediaPlayer?.Position.TotalSeconds ?? 0;
     public event EventHandler<bool> IsPlayingChanged;
 

@@ -13,7 +13,7 @@ namespace MauiAudio.Platforms.Android
             instance.Binder.GetMediaPlayerService().mediaPlayer : null;
 
         public bool IsPlaying => mediaPlayer?.IsPlaying ?? false;
-
+        public double Duration=>mediaPlayer?.Duration/1000 ?? 0;
         public double CurrentPosition => mediaPlayer?.CurrentPosition / 1000 ?? 0;
         public event EventHandler<bool> IsPlayingChanged;
 
