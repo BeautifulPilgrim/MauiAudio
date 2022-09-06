@@ -14,6 +14,9 @@ public class NativeAudioService : INativeAudioService
     public double Duration => mediaPlayer?.NaturalDuration.TotalSeconds ?? 0;
     public double CurrentPosition => mediaPlayer?.Position.TotalSeconds ?? 0;
     public event EventHandler<bool> IsPlayingChanged;
+    public event EventHandler PlayEnded;
+    public event EventHandler PlayNext;
+    public event EventHandler PlayPrevious;
 
     public async Task InitializeAsync(string audioURI)
     {

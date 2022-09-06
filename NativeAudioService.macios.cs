@@ -2,7 +2,7 @@
 using AVFoundation;
 using Foundation;
 
-namespace MauiAudio.Platforms.MacCatalyst;
+namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
@@ -15,8 +15,11 @@ public class NativeAudioService : INativeAudioService
         : false;
 
     public double CurrentPosition => avPlayer?.CurrentTime ?? 0;
-    public double Duration => avPlayer?.Duration ?? 0;
+    public double Duration=>avPlayer?.Duration ?? 0;
     public event EventHandler<bool> IsPlayingChanged;
+    public event EventHandler PlayEnded;
+    public event EventHandler PlayNext;
+    public event EventHandler PlayPrevious;
 
     public async Task InitializeAsync(string audioURI)
     {
@@ -70,7 +73,7 @@ public class NativeAudioService : INativeAudioService
     }
 
     public async Task InitializeAsync(MediaPlay media)
-    {
+{
         _uri = media.URL;
         NSUrl fileURL = new NSUrl(_uri.ToString());
 
@@ -80,8 +83,10 @@ public class NativeAudioService : INativeAudioService
         }
 
         avPlayer = AVAudioPlayer.FromUrl(fileURL);
-        avPlayer.FinishedPlaying += delegate (object sender, AVStatusEventArgs e) {
-            MessagingCenter.Instance.Send("PlayerService", "Next");
-        };
+        avPlayer.FinishedPlaying += OnPlayerFinishedPlaying;
+    }
+    void OnPlayerFinishedPlaying(object? sender, AVStatusEventArgs e)
+    {
+        PlayEnded?.Invoke(this, e);
     }
 }

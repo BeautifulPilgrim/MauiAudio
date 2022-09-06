@@ -14,13 +14,32 @@ Add the [NuGet package](https://www.nuget.org/packages/Plugin.MauiAudio/) to the
 - Select Plugin.MauiAudio
 
 ## Init
-In CreateMauiApp():
+In CreateMauiApp()[MauiProgram.cs]
+
+#### Version ≥ 1.0.3：
+
 ```c#
 using MauiAudio;
 
 builder.UseMauiAudio()
 ```
+#### Version < 1.0.3:
+
+```c#
+#if WINDOWS
+        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Windows.NativeAudioService>();
+#elif ANDROID
+        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Android.NativeAudioService>();
+#elif MACCATALYST
+        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.MacCatalyst.NativeAudioService>();
+        builder.Services.TryAddSingleton< Platforms.MacCatalyst.ConnectivityService>();
+#elif IOS
+        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.iOS.NativeAudioService>();
+#endif
+```
+
 ### Android
+
 ```c#
 public class MainActivity : MauiAppCompatActivity,IAudioActivity
 {
@@ -82,18 +101,39 @@ await InternalPlayAsync(position);
 await audioService.PauseAsync();
 ```
 
+## Interface
+
+```c#
+public interface INativeAudioService
+{
+    Task InitializeAsync(string audioURI);
+    Task InitializeAsync(MediaPlay media);
+    Task PlayAsync(double position = 0);
+
+    Task PauseAsync();
+
+    Task SetMuted(bool value);
+
+    Task SetVolume(int value);
+
+    Task SetCurrentTime(double value);
+
+    ValueTask DisposeAsync();
+
+    bool IsPlaying { get; }
+
+    double CurrentPosition { get; }
+    double Duration { get; }
+
+    event EventHandler<bool> IsPlayingChanged;
+}
+```
+
 ## Notify
 
 If you want to process the player's previous or next song:(only Android available now)
 
 ```c#
-MessagingCenter.Instance.Subscribe<string>("PlayerService","Next", async (sender) =>
-        {
-            # code
-        });
-MessagingCenter.Instance.Subscribe<string>("PlayerService", "PREVIOUS", async (sender) =>
-        {
-            # code
-        });
+UnFinished
 ```
 

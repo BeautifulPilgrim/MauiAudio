@@ -22,4 +22,7 @@ public interface INativeAudioService
     double Duration { get; }
 
     event EventHandler<bool> IsPlayingChanged;
+    event EventHandler PlayEnded;
+    event EventHandler PlayNext;
+    event EventHandler PlayPrevious;
 }

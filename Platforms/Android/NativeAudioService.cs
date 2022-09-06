@@ -16,6 +16,9 @@ namespace MauiAudio.Platforms.Android
         public double Duration=>mediaPlayer?.Duration/1000 ?? 0;
         public double CurrentPosition => mediaPlayer?.CurrentPosition / 1000 ?? 0;
         public event EventHandler<bool> IsPlayingChanged;
+        public event EventHandler PlayEnded;
+        public event EventHandler PlayNext;
+        public event EventHandler PlayPrevious;
 
         public Task InitializeAsync(string audioURI)
         {
