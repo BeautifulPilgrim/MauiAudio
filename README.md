@@ -126,14 +126,20 @@ public interface INativeAudioService
     double Duration { get; }
 
     event EventHandler<bool> IsPlayingChanged;
+    event EventHandler PlayEnded;
+    event EventHandler PlayNext;
+    event EventHandler PlayPrevious;
 }
 ```
 
 ## Notify
 
-If you want to process the player's previous or next song:(only Android available now)
+If you want to process the player's previous or next song:(only Android and Windows available now), preprocess the four EventHandlers.
 
 ```c#
-UnFinished
+    event EventHandler<bool> IsPlayingChanged;
+    event EventHandler PlayEnded;
+    event EventHandler PlayNext;
+    event EventHandler PlayPrevious;
 ```
 

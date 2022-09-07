@@ -47,6 +47,11 @@ public class MediaPlayerService : Service,
 
     public event PlayingChangedEventHandler PlayingChanged;
 
+    public event EventHandler<bool> IsPlayingChanged;
+    public event EventHandler TaskPlayEnded;
+    public event EventHandler TaskPlayNext;
+    public event EventHandler TaskPlayPrevious;
+
     public string AudioUrl;
 
     public bool isCurrentEpisode = true;
@@ -99,6 +104,7 @@ public class MediaPlayerService : Service,
     protected virtual void OnPlayingChanged(bool e)
     {
         PlayingChanged?.Invoke(this, e);
+        IsPlayingChanged?.Invoke(this,e);
     }
 
     protected virtual void OnCoverReloaded(EventArgs e)
@@ -200,6 +206,7 @@ public class MediaPlayerService : Service,
 
     public async void OnCompletion(MediaPlayer mp)
     {
+        TaskPlayEnded.Invoke(this, EventArgs.Empty);
         await PlayNext();
     }
 
@@ -371,7 +378,7 @@ public class MediaPlayerService : Service,
 
     public async Task PlayNext()
     {
-        MessagingCenter.Instance.Send("PlayerService", "Next");
+        TaskPlayNext.Invoke(this,EventArgs.Empty);
         //if (mediaPlayer != null)
         //{
         //    mediaPlayer.Reset();
@@ -379,7 +386,7 @@ public class MediaPlayerService : Service,
         //    mediaPlayer = null;
         //}
 
-        //UpdatePlaybackState(PlaybackStateCode.SkippingToNext);
+        UpdatePlaybackState(PlaybackStateCode.SkippingToNext);
 
         //await Play();
     }
@@ -387,7 +394,7 @@ public class MediaPlayerService : Service,
     public async Task PlayPrevious()
     {
         // Start current track from beginning if it's the first track or the track has played more than 3sec and you hit "playPrevious".
-        MessagingCenter.Instance.Send("PlayerService", "PREVIOUS");
+        TaskPlayPrevious.Invoke(this, EventArgs.Empty);
         //if (Position > 3000)
         //{
         //    await Seek(0);
@@ -401,7 +408,7 @@ public class MediaPlayerService : Service,
         //        mediaPlayer = null;
         //    }
 
-        //    UpdatePlaybackState(PlaybackStateCode.SkippingToPrevious);
+        UpdatePlaybackState(PlaybackStateCode.SkippingToPrevious);
 
         //    await Play();
         //}

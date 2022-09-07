@@ -66,10 +66,10 @@ public class NativeAudioService : INativeAudioService
         return Task.CompletedTask;
     }
 
-    public ValueTask DisposeAsync()
+    public Task DisposeAsync()
     {
         avPlayer?.Dispose();
-        return ValueTask.CompletedTask;
+        return Task.CompletedTask;
     }
 
     public async Task InitializeAsync(MediaPlay media)
@@ -88,5 +88,6 @@ public class NativeAudioService : INativeAudioService
     void OnPlayerFinishedPlaying(object? sender, AVStatusEventArgs e)
     {
         PlayEnded?.Invoke(this, e);
+        PlayNext?.Invoke(this, e);
     }
 }

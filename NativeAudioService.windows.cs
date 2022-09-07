@@ -46,7 +46,6 @@ public class NativeAudioService : INativeAudioService
         {
             mediaPlayer.Position = TimeSpan.FromSeconds(value);
         }
-
         return Task.CompletedTask;
     }
 
@@ -56,7 +55,6 @@ public class NativeAudioService : INativeAudioService
         {
             mediaPlayer.IsMuted = value;
         }
-
         return Task.CompletedTask;
     }
 
@@ -64,25 +62,23 @@ public class NativeAudioService : INativeAudioService
     {
         if (mediaPlayer != null)
         {
-            mediaPlayer.Volume = value != 0
-                ? value / 100d
-                : 0;
+            mediaPlayer.Volume = value != 0 ? value / 100d : 0;
         }
 
         return Task.CompletedTask;
     }
 
-    public ValueTask DisposeAsync()
+    public Task DisposeAsync()
     {
         mediaPlayer?.Dispose();
-        return ValueTask.CompletedTask;
+        return Task.CompletedTask;
     }
     private MediaPlaybackItem mediaPlaybackItem(MediaPlay media)
     {
         var mediaItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(media.URL)));
         var props = mediaItem.GetDisplayProperties();
         props.Type = MediaPlaybackType.Music;
-        if (media.Name!=null) props.MusicProperties.Title = media.Name;
+        if (media.Name != null) props.MusicProperties.Title = media.Name;
         if (media.Author != null) props.MusicProperties.Artist = media.Author;
         if (media.Image != null)
             props.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(media.Image));
@@ -113,18 +109,19 @@ public class NativeAudioService : INativeAudioService
     }
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
-        MessagingCenter.Instance.Send("PlayerService", "Next");
+        PlayEnded.Invoke(sender, EventArgs.Empty);
+        PlayNext.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_NextReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerNextReceivedEventArgs args)
     {
-        MessagingCenter.Instance.Send("PlayerService", "Next");
+        PlayNext.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
     {
-        MessagingCenter.Instance.Send("PlayerService", "PREVIOUS");
+        PlayPrevious.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_PauseReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPauseReceivedEventArgs args)
     {
-        MessagingCenter.Instance.Send("PlayerService", "Pause");
+        IsPlayingChanged.Invoke(sender, IsPlaying);
     }
 }

@@ -10,7 +10,9 @@ public static class AppBuilderExtensions
 {
     public static MauiAppBuilder UseMauiAudio(this MauiAppBuilder builder)
     {
+#if WINDOWS||ANDROID||MACCATALYST||IOS
         builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.NativeAudioService>();
+#endif
         return builder;
     }
 }

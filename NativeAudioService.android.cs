@@ -62,10 +62,10 @@ public class NativeAudioService : INativeAudioService
         return instance.Binder.GetMediaPlayerService().Seek((int)position * 1000);
     }
 
-    public ValueTask DisposeAsync()
+    public Task DisposeAsync()
     {
         instance.Binder?.Dispose();
-        return ValueTask.CompletedTask;
+        return Task.CompletedTask;
     }
 
     public async Task InitializeAsync(MediaPlay media)
@@ -80,7 +80,10 @@ public class NativeAudioService : INativeAudioService
             instance.Binder.GetMediaPlayerService().isCurrentEpisode = false;
             instance.Binder.GetMediaPlayerService().UpdatePlaybackStateStopped();
         }
-
+        instance.Binder.GetMediaPlayerService().IsPlayingChanged += IsPlayingChanged;
+        instance.Binder.GetMediaPlayerService().TaskPlayEnded += PlayEnded;
+        instance.Binder.GetMediaPlayerService().TaskPlayNext += PlayNext;
+        instance.Binder.GetMediaPlayerService().TaskPlayPrevious += PlayPrevious;
         this.instance.Binder.GetMediaPlayerService().PlayingChanged += (object sender, bool e) =>
         {
             Task.Run(async () => {
