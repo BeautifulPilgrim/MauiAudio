@@ -19,6 +19,7 @@
 		<PackageProjectUrl>https://github.com/BeautifulPilgrim/MauiAudio</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/BeautifulPilgrim/MauiAudio</RepositoryUrl>
 		<Description>MauiAudio-Cross platform audio plugin for MAUI</Description>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -51,5 +52,11 @@
 	<ItemGroup>
 	  <Folder Include="Platforms\iOS\" />
 	  <Folder Include="Platforms\MacCatalyst\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>
