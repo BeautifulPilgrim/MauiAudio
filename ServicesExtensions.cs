@@ -13,11 +13,11 @@ public static class AppBuilderExtensions
 #if WINDOWS
         builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Windows.NativeAudioService>();
 #elif ANDROID
-        builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Android.NativeAudioService>();
+        builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.NativeAudioService>();
 #elif MACCATALYST
-        builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.MacCatalyst.NativeAudioService>();
+        builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.NativeAudioService>();
 #elif IOS
-        builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.iOS.NativeAudioService>();
+        builder.Services.AddSingleton<MauiAudio.INativeAudioService, MauiAudio.NativeAudioService>();
 #endif
         return builder;
     }
