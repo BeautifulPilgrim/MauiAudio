@@ -2,7 +2,7 @@
 using Windows.Media.Playback;
 using Windows.Media;
 using Windows.Storage.Streams;
-namespace MauiAudio.Platforms.Windows;
+namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
