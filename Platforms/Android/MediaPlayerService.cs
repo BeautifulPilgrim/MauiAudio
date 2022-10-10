@@ -326,9 +326,12 @@ public class MediaPlayerService : Service,
             {
                 MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
 
-                await mediaPlayer.SetDataSourceAsync(ApplicationContext, AndroidNet.Uri.Parse(AudioUrl));
-
-                await metaRetriever.SetDataSourceAsync(AudioUrl, new Dictionary<string, string>());
+                var uri = AndroidNet.Uri.Parse(AudioUrl);
+				await mediaPlayer.SetDataSourceAsync(ApplicationContext, uri);
+                
+                //If Uri Scheme is not set its a local file so there's no metadata to fetch
+                if(!string.IsNullOrWhiteSpace(uri.Scheme))
+                    await metaRetriever.SetDataSourceAsync(AudioUrl, new Dictionary<string, string>());
 
                 var focusResult = audioManager.RequestAudioFocus(new AudioFocusRequestClass
                     .Builder(AudioFocus.Gain)
@@ -348,12 +351,16 @@ public class MediaPlayerService : Service,
                 UpdateMediaMetadataCompat(metaRetriever);
                 StartNotification();
 
-                byte[] imageByteArray = metaRetriever.GetEmbeddedPicture();
-                //if (imageByteArray == null)
-                //    Cover = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.abc_ab_share_pack_mtrl_alpha); //TODO player_play
-                //else
-                if (imageByteArray != null)
-                    Cover = await BitmapFactory.DecodeByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
+                //Check if there's some metadata
+                if (metaRetriever != null && !string.IsNullOrWhiteSpace(metaRetriever.ExtractMetadata(MetadataKey.Album)))
+                {
+                    byte[] imageByteArray = metaRetriever.GetEmbeddedPicture();
+                    //if (imageByteArray == null)
+                    //    Cover = await BitmapFactory.DecodeResourceAsync(Resources, Resource.Drawable.abc_ab_share_pack_mtrl_alpha); //TODO player_play
+                    //else
+                    if (imageByteArray != null)
+                        Cover = await BitmapFactory.DecodeByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
+                }
             }
         }
         catch (Exception ex)
