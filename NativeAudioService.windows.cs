@@ -109,19 +109,19 @@ public class NativeAudioService : INativeAudioService
     }
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
-        PlayEnded.Invoke(sender, EventArgs.Empty);
-        PlayNext.Invoke(sender, EventArgs.Empty);
+        PlayEnded?.Invoke(sender, EventArgs.Empty);
+        PlayNext?.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_NextReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerNextReceivedEventArgs args)
     {
-        PlayNext.Invoke(sender, EventArgs.Empty);
+        PlayNext?.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
     {
-        PlayPrevious.Invoke(sender, EventArgs.Empty);
+        PlayPrevious?.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_PauseReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPauseReceivedEventArgs args)
     {
-        IsPlayingChanged.Invoke(sender, IsPlaying);
+        IsPlayingChanged?.Invoke(sender, IsPlaying);
     }
 }

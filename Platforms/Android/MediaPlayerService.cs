@@ -206,7 +206,7 @@ public class MediaPlayerService : Service,
 
     public async void OnCompletion(MediaPlayer mp)
     {
-        TaskPlayEnded.Invoke(this, EventArgs.Empty);
+        TaskPlayEnded?.Invoke(this, EventArgs.Empty);
         await PlayNext();
     }
 
@@ -378,7 +378,7 @@ public class MediaPlayerService : Service,
 
     public async Task PlayNext()
     {
-        TaskPlayNext.Invoke(this,EventArgs.Empty);
+        TaskPlayNext?.Invoke(this,EventArgs.Empty);
         //if (mediaPlayer != null)
         //{
         //    mediaPlayer.Reset();
@@ -394,7 +394,7 @@ public class MediaPlayerService : Service,
     public async Task PlayPrevious()
     {
         // Start current track from beginning if it's the first track or the track has played more than 3sec and you hit "playPrevious".
-        TaskPlayPrevious.Invoke(this, EventArgs.Empty);
+        TaskPlayPrevious?.Invoke(this, EventArgs.Empty);
         //if (Position > 3000)
         //{
         //    await Seek(0);
