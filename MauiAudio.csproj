@@ -19,7 +19,6 @@
 		<PackageProjectUrl>https://github.com/BeautifulPilgrim/MauiAudio</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/BeautifulPilgrim/MauiAudio</RepositoryUrl>
 		<Description>MauiAudio-Cross platform audio plugin for MAUI</Description>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
