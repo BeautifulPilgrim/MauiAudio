@@ -143,3 +143,6 @@ If you want to process the player's previous or next song:(only Android and Wind
     event EventHandler PlayPrevious;
 ```
 
+## Sample
+
+![Snipaste_2022-10-11_21-35-57](README.assets\Snipaste_2022-10-11_21-35-57.png)
