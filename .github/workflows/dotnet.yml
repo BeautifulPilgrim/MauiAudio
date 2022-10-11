@@ -30,6 +30,7 @@ jobs:
           & dotnet restore
     - name: Build
       run: |
+          & cd MauiAudio
           & dotnet pack --no-restore --configuration Release
       
     - name: Setup NuGet.exe for use with actions
