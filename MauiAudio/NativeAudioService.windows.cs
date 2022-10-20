@@ -13,6 +13,21 @@ public class NativeAudioService : INativeAudioService
         && mediaPlayer.CurrentState == MediaPlayerState.Playing;
     public double Duration => mediaPlayer?.NaturalDuration.TotalSeconds ?? 0;
     public double CurrentPosition => mediaPlayer?.Position.TotalSeconds ?? 0;
+
+    public double Volume
+    {
+        get => mediaPlayer?.Volume ?? 0;
+
+
+        set => mediaPlayer.Volume = Math.Clamp(value, 0, 1);
+    }
+    public bool Muted
+    {
+        get => mediaPlayer?.IsMuted ?? false;
+        set => mediaPlayer.IsMuted = value;
+    }
+    public double Balance { get => mediaPlayer.AudioBalance; set => mediaPlayer.AudioBalance = Math.Clamp(value, -1, 1); }
+
     public event EventHandler<bool> IsPlayingChanged;
     public event EventHandler PlayEnded;
     public event EventHandler PlayNext;
@@ -48,26 +63,6 @@ public class NativeAudioService : INativeAudioService
         }
         return Task.CompletedTask;
     }
-
-    public Task SetMuted(bool value)
-    {
-        if (mediaPlayer != null)
-        {
-            mediaPlayer.IsMuted = value;
-        }
-        return Task.CompletedTask;
-    }
-
-    public Task SetVolume(int value)
-    {
-        if (mediaPlayer != null)
-        {
-            mediaPlayer.Volume = value != 0 ? value / 100d : 0;
-        }
-
-        return Task.CompletedTask;
-    }
-
     public Task DisposeAsync()
     {
         mediaPlayer?.Dispose();
