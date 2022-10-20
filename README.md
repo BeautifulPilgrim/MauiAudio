@@ -38,9 +38,21 @@ builder.UseMauiAudio()
 #endif
 ```
 
-### Android
+### Platform/Android
+
+AndroidManifest.xml
+
+```
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+```
+
+MainApplication.cs
 
 ```c#
+using Android.Content;
+using MauiAudio.Platforms.Android;
+using MauiAudio.Platforms.Android.CurrentActivity;
+
 public class MainActivity : MauiAppCompatActivity,IAudioActivity
 {
     MediaPlayerServiceConnection mediaPlayerServiceConnection;
