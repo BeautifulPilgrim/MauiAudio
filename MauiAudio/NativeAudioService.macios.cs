@@ -9,13 +9,18 @@ public class NativeAudioService : INativeAudioService
     //AVPlayer avPlayer;
     AVAudioPlayer avPlayer;
     string _uri;
-
+    float volume = 1;
     public bool IsPlaying => avPlayer != null
         ? avPlayer.Playing
         : false;
 
     public double CurrentPosition => avPlayer?.CurrentTime ?? 0;
-    public double Duration=>avPlayer?.Duration ?? 0;
+    public double Duration => avPlayer?.Duration ?? 0;
+
+    public double Volume { get => volume; set { volume = (float)Math.Clamp(value, 0, 1); avPlayer.Volume = volume; } }
+    public bool Muted { get => avPlayer?.Volume == 0; set { if (value) avPlayer.Volume = 0; else avPlayer.Volume = volume; } }
+    public double Balance { get => avPlayer?.Pan ?? 0; set => avPlayer.Pan = (float)Math.Clamp(value, -1, 1); }
+
     public event EventHandler<bool> IsPlayingChanged;
     public event EventHandler PlayEnded;
     public event EventHandler PlayNext;
@@ -46,26 +51,6 @@ public class NativeAudioService : INativeAudioService
         return Task.CompletedTask;
     }
 
-    public Task SetMuted(bool value)
-    {
-        if (avPlayer != null)
-        {
-            avPlayer.Volume = value ? 100 : 0;
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task SetVolume(int value)
-    {
-        if (avPlayer != null)
-        {
-            avPlayer.Volume = value;
-        }
-
-        return Task.CompletedTask;
-    }
-
     public Task DisposeAsync()
     {
         avPlayer?.Dispose();
@@ -73,7 +58,7 @@ public class NativeAudioService : INativeAudioService
     }
 
     public async Task InitializeAsync(MediaPlay media)
-{
+    {
         _uri = media.URL;
         NSUrl fileURL = new NSUrl(_uri.ToString());
 

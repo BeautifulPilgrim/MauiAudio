@@ -9,7 +9,9 @@ namespace MauiAudio;
 public class NativeAudioService : INativeAudioService
 {
     IAudioActivity instance;
-
+    double volume = 1;
+    double balance = 0;
+    bool muted=false;
     private MediaPlayer mediaPlayer => instance != null &&
         instance.Binder.GetMediaPlayerService() != null ?
         instance.Binder.GetMediaPlayerService().mediaPlayer : null;
@@ -17,6 +19,11 @@ public class NativeAudioService : INativeAudioService
     public bool IsPlaying => mediaPlayer?.IsPlaying ?? false;
     public double Duration=>mediaPlayer?.Duration/1000 ?? 0;
     public double CurrentPosition => mediaPlayer?.CurrentPosition / 1000 ?? 0;
+
+    public double Volume { get => volume; set { volume = value; SetVolume(volume = value, Balance); } }
+    public double Balance { get => balance; set { balance = value;SetVolume(Volume, balance = value); } }
+    public bool Muted { get => muted; set => SetMuted(value); }
+
     public event EventHandler<bool> IsPlayingChanged;
     public event EventHandler PlayEnded;
     public event EventHandler PlayNext;
@@ -43,17 +50,24 @@ public class NativeAudioService : INativeAudioService
         await instance.Binder.GetMediaPlayerService().Seek((int)position * 1000);
     }
 
-    public Task SetMuted(bool value)
+    Task SetMuted(bool value)
     {
-        instance?.Binder.GetMediaPlayerService().SetMuted(value);
-
+        muted = value;
+        if (value)
+            mediaPlayer.SetVolume(0, 0);
+        else SetVolume(volume,balance);
         return Task.CompletedTask;
     }
-
-    public Task SetVolume(int value)
+    Task SetVolume(double volume, double balance)
     {
-        instance?.Binder.GetMediaPlayerService().SetVolume(value);
+        volume = Math.Clamp(volume, 0, 1);
+        balance = Math.Clamp(balance, -1, 1);
 
+        // Using the "constant power pan rule." See: http://www.rs-met.com/documents/tutorials/PanRules.pdf
+        var left = Math.Cos((Math.PI * (balance + 1)) / 4) * volume;
+        var right = Math.Sin((Math.PI * (balance + 1)) / 4) * volume;
+
+        mediaPlayer?.SetVolume((float)left, (float)right);
         return Task.CompletedTask;
     }
 
@@ -117,4 +131,5 @@ public class NativeAudioService : INativeAudioService
 
         return imageBitmap;
     }
+
 }
