@@ -89,7 +89,7 @@ public class NativeAudioService : INativeAudioService
             Task.Run(async () => {
                 if (e)
                 {
-                    await this.PlayAsync();
+                    await this.PlayAsync(CurrentPosition);
                 }
                 else
                 {
