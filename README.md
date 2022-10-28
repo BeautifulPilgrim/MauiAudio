@@ -115,7 +115,7 @@ await audioService.PauseAsync();
 
 ## Interface
 
-### Version ≥ 1.0.3
+### Version ≥ 1.0.6
 
 ```c#
 public interface INativeAudioService
