@@ -3,8 +3,8 @@ name: .NET Nuget Publish
 on:
   push:
     branches: [ "master" ]
-  tags:
-    - v*
+    tags:
+      - v*
 env:
     DOTNETVERSION: 6.0.300
 jobs:
