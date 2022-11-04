@@ -4,6 +4,10 @@
 
 Based from [.NET Podcasts - Sample Application](https://github.com/microsoft/dotnet-podcasts#net-podcasts---sample-application)
 
+## Intro
+
+An Audio Plugin in MAUI with native control.
+
 A code novice, please forgive me if the documentation or code is not standardized. If you can help improve it, I would be very grateful!
 
 ## Installation
@@ -46,7 +50,7 @@ AndroidManifest.xml
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 ```
 
-MainApplication.cs
+MainActivity.cs
 
 ```c#
 using Android.Content;
