@@ -6,7 +6,6 @@ namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
-    string _uri;
     MediaPlayer mediaPlayer;
 
     public bool IsPlaying => mediaPlayer != null
@@ -82,8 +81,6 @@ public class NativeAudioService : INativeAudioService
     }
     public async Task InitializeAsync(MediaPlay media)
     {
-        _uri = media.URL;
-
         if (mediaPlayer == null)
         {
             mediaPlayer = new MediaPlayer

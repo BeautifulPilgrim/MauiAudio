@@ -8,7 +8,6 @@ public class NativeAudioService : INativeAudioService
 {
     //AVPlayer avPlayer;
     AVAudioPlayer avPlayer;
-    string _uri;
     float volume = 1;
     public bool IsPlaying => avPlayer != null
         ? avPlayer.Playing
@@ -59,15 +58,23 @@ public class NativeAudioService : INativeAudioService
 
     public async Task InitializeAsync(MediaPlay media)
     {
-        _uri = media.URL;
-        NSUrl fileURL = new NSUrl(_uri.ToString());
 
         if (avPlayer != null)
         {
             await PauseAsync();
         }
-
-        avPlayer = AVAudioPlayer.FromUrl(fileURL);
+        if(media.Stream!=null){
+            // Using Stream
+            var data = NSData.FromStream(audioStream)
+            ?? throw new FailedToLoadAudioException("Unable to convert audioStream to NSData.");
+            player = AVAudioPlayer.FromData(data)
+            ?? throw new FailedToLoadAudioException("Unable to create AVAudioPlayer from data.");
+        }
+        else{
+            // Using URL
+            NSUrl fileURL = new NSUrl(media.URL);
+            avPlayer = AVAudioPlayer.FromUrl(fileURL);
+        }
         avPlayer.FinishedPlaying += OnPlayerFinishedPlaying;
     }
     void OnPlayerFinishedPlaying(object? sender, AVStatusEventArgs e)
