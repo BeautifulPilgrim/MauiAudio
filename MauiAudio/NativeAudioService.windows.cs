@@ -69,7 +69,7 @@ public class NativeAudioService : INativeAudioService
     }
     private MediaPlaybackItem mediaPlaybackItem(MediaPlay media)
     {
-        var mediaItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(media.URL)));
+        var mediaItem = new MediaPlaybackItem(media.Stream == null ? MediaSource.CreateFromUri(new Uri(media.URL)) : MediaSource.CreateFromStream(media.Stream));
         var props = mediaItem.GetDisplayProperties();
         props.Type = MediaPlaybackType.Music;
         if (media.Name != null) props.MusicProperties.Title = media.Name;
