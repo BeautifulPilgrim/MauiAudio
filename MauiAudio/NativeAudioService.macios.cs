@@ -65,10 +65,9 @@ public class NativeAudioService : INativeAudioService
         }
         if(media.Stream!=null){
             // Using Stream
-            var data = NSData.FromStream(audioStream)
-            ?? throw new FailedToLoadAudioException("Unable to convert audioStream to NSData.");
-            player = AVAudioPlayer.FromData(data)
-            ?? throw new FailedToLoadAudioException("Unable to create AVAudioPlayer from data.");
+            var data = NSData.FromStream(media.Stream)?? throw new Exception("Unable to convert audioStream to NSData.");
+            avPlayer = AVAudioPlayer.FromData(data)
+            ?? throw new Exception("Unable to create AVAudioPlayer from data.");
         }
         else{
             // Using URL
