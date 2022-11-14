@@ -52,7 +52,7 @@ public class MediaPlayerService : Service,
     public event EventHandler TaskPlayNext;
     public event EventHandler TaskPlayPrevious;
 
-    public string AudioUrl;
+    public MediaPlay mediaPlay;
 
     public bool isCurrentEpisode = true;
 
@@ -273,7 +273,7 @@ public class MediaPlayerService : Service,
         get
         {
             if (cover == null)
-                cover = BitmapFactory.DecodeResource(Resources, Resource.Drawable.abc_ab_share_pack_mtrl_alpha); //TODO player_play
+                cover = BitmapFactory.DecodeResource(Resources, Resource.Drawable.music); //TODO player_play
             return cover;
         }
         set
@@ -326,33 +326,48 @@ public class MediaPlayerService : Service,
             {
                 MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
 
-                var uri = AndroidNet.Uri.Parse(AudioUrl);
-				await mediaPlayer.SetDataSourceAsync(ApplicationContext, uri);
-                
-                //If Uri Scheme is not set its a local file so there's no metadata to fetch
-                if(!string.IsNullOrWhiteSpace(uri.Scheme))
-                    await metaRetriever.SetDataSourceAsync(AudioUrl, new Dictionary<string, string>());
-
-                var focusResult = audioManager.RequestAudioFocus(new AudioFocusRequestClass
-                    .Builder(AudioFocus.Gain)
-                    .SetOnAudioFocusChangeListener(this)
-                    .Build());
-
-                if (focusResult != AudioFocusRequest.Granted)
+                AndroidNet.Uri uri;
+                if(mediaPlay.Stream!= null)
                 {
-                    // Could not get audio focus
-                    Console.WriteLine("Could not get audio focus");
+                    var fileStream = File.Create(FileSystem.Current.CacheDirectory+"temp.wav");
+                    mediaPlay.Stream.CopyTo(fileStream);
+                    fileStream.Close();
+                    uri = AndroidNet.Uri.Parse( FileSystem.Current.CacheDirectory + "temp.wav");
                 }
+                else
+                {
+                    uri = AndroidNet.Uri.Parse(mediaPlay.URL);
+                }
+				await mediaPlayer.SetDataSourceAsync(ApplicationContext, uri);
 
+                //If Uri Scheme is not set its a local file so there's no metadata to fetch
+                if (!string.IsNullOrWhiteSpace(uri.Scheme))
+                    await metaRetriever.SetDataSourceAsync(uri.ToString(), new Dictionary<string, string>());
+
+                if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                {
+                    var focusResult = audioManager.RequestAudioFocus(new AudioFocusRequestClass
+                   .Builder(AudioFocus.Gain)
+                   .SetOnAudioFocusChangeListener(this)
+                   .Build());
+
+                    if (focusResult != AudioFocusRequest.Granted)
+                    {
+                        // Could not get audio focus
+                        Console.WriteLine("Could not get audio focus");
+                    }
+                }
                 UpdatePlaybackState(PlaybackStateCode.Buffering);
                 mediaPlayer.PrepareAsync();
 
                 AquireWifiLock();
-                UpdateMediaMetadataCompat(metaRetriever);
-                StartNotification();
 
                 //Check if there's some metadata
-                if (metaRetriever != null && !string.IsNullOrWhiteSpace(metaRetriever.ExtractMetadata(MetadataKey.Album)))
+                if (!string.IsNullOrEmpty(mediaPlay.Image))
+                {
+                    Cover = await GetImageBitmapFromUrl(mediaPlay.Image);
+                }
+                else if (metaRetriever != null && !string.IsNullOrWhiteSpace(metaRetriever.ExtractMetadata(MetadataKey.Album)))
                 {
                     byte[] imageByteArray = metaRetriever.GetEmbeddedPicture();
                     //if (imageByteArray == null)
@@ -361,6 +376,8 @@ public class MediaPlayerService : Service,
                     if (imageByteArray != null)
                         Cover = await BitmapFactory.DecodeByteArrayAsync(imageByteArray, 0, imageByteArray.Length);
                 }
+                UpdateMediaMetadataCompat(metaRetriever);
+                StartNotification();
             }
         }
         catch (Exception ex)
@@ -371,7 +388,21 @@ public class MediaPlayerService : Service,
             Console.WriteLine(ex);
         }
     }
+    private async Task<Bitmap> GetImageBitmapFromUrl(string url)
+    {
+        Bitmap imageBitmap = null;
 
+        using (var webClient = new HttpClient())
+        {
+            var imageBytes = await webClient.GetByteArrayAsync(url);
+            if (imageBytes != null && imageBytes.Length > 0)
+            {
+                imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
+            }
+        }
+
+        return imageBitmap;
+    }
     public async Task Seek(int position)
     {
         await Task.Run(() =>
@@ -539,9 +570,9 @@ public class MediaPlayerService : Service,
         if (metaRetriever != null)
         {
             builder
-            .PutString(MediaMetadata.MetadataKeyAlbum, metaRetriever.ExtractMetadata(MetadataKey.Album))
-            .PutString(MediaMetadata.MetadataKeyArtist, metaRetriever.ExtractMetadata(MetadataKey.Artist))
-            .PutString(MediaMetadata.MetadataKeyTitle, metaRetriever.ExtractMetadata(MetadataKey.Title));
+            .PutString(MediaMetadata.MetadataKeyAlbum,metaRetriever.ExtractMetadata(MetadataKey.Album))
+            .PutString(MediaMetadata.MetadataKeyArtist, mediaPlay.Author ?? metaRetriever.ExtractMetadata(MetadataKey.Artist))
+            .PutString(MediaMetadata.MetadataKeyTitle, mediaPlay.Name ?? metaRetriever.ExtractMetadata(MetadataKey.Title));
         }
         else
         {

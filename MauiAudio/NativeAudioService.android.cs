@@ -112,24 +112,9 @@ public class NativeAudioService : INativeAudioService
             });
             IsPlayingChanged?.Invoke(this, e);
         };
-        if(media.Image!=null) instance.Binder.GetMediaPlayerService().Cover= await GetImageBitmapFromUrl(media.Image);
-        else instance.Binder.GetMediaPlayerService().Cover = null;
-        instance.Binder.GetMediaPlayerService().AudioUrl =media.URL;
-    }
-    private async Task<Bitmap> GetImageBitmapFromUrl(string url)
-    {
-        Bitmap imageBitmap = null;
-
-        using (var webClient = new HttpClient())
-        {
-            var imageBytes = await webClient.GetByteArrayAsync(url);
-            if (imageBytes != null && imageBytes.Length > 0)
-            {
-                imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
-            }
-        }
-
-        return imageBitmap;
+        //if(media.Image!=null) instance.Binder.GetMediaPlayerService().Cover= await GetImageBitmapFromUrl(media.Image);
+        //else instance.Binder.GetMediaPlayerService().Cover = null;
+        instance.Binder.GetMediaPlayerService().mediaPlay =media;
     }
 
 }
