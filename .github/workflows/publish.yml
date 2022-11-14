@@ -2,54 +2,52 @@ name: .NET Nuget Publish
 
 on:
   push:
-    branches: [ "master" ]
     tags:
       - v*
 env:
-    DOTNETVERSION: 6.0.300
+  DOTNETVERSION: 6.0.300
 jobs:
   build:
-
     runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '${{env.DOTNETVERSION}}'
-    - name: Install .NET MAUI
-      shell: pwsh
-      run: |
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "${{env.DOTNETVERSION}}"
+      - name: Install .NET MAUI
+        shell: pwsh
+        run: |
           & dotnet nuget locals all --clear
           & dotnet workload install maui --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
           # & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
-    - name: Restore dependencies
-      run: |
+      - name: Restore dependencies
+        run: |
           & cd MauiAudio
           & dotnet restore
-    - name: Build
-      run: |
+      - name: Build
+        run: |
           & cd MauiAudio
           & dotnet pack --no-restore --configuration Release
-      
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.6
-      
-#    - name: 添加github仓库
- #     run: |
- #       nuget sources add -name github -Source https://nuget.pkg.github.com/BeautifulPilgrim/index.json -Username BeautifulPilgrim -Password ${{ secrets.GitHubToken }}
-    - name: list
-      run: |
-        cd MauiAudio
-        dir ./bin/Release
-    - name: 发布生成包到github和nuget
-      run: |
-        cd MauiAudio
-        nuget push **/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
+
+      - name: Setup NuGet.exe for use with actions
+        uses: NuGet/setup-nuget@v1.0.6
+
+      #    - name: 添加github仓库
+      #     run: |
+      #       nuget sources add -name github -Source https://nuget.pkg.github.com/BeautifulPilgrim/index.json -Username BeautifulPilgrim -Password ${{ secrets.GitHubToken }}
+      - name: list
+        run: |
+          cd MauiAudio
+          dir ./bin/Release
+      - name: 发布生成包到github和nuget
+        run: |
+          cd MauiAudio
+          nuget push **/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
+  #       nuget push ./bin/Release/*.nupkg -Source github -SkipDuplicate
+
 #        nuget push ./bin/Release/*.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate -ApiKey ${{ secrets.NugetKey }} -NoSymbol
- #       nuget push ./bin/Release/*.nupkg -Source github -SkipDuplicate
-        
 #    - name: Publish NuGet
 #      uses: brandedoutcast/publish-nuget@v2.5.5
 #      with:
