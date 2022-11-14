@@ -18,6 +18,7 @@ Add the [NuGet package](https://www.nuget.org/packages/Plugin.MauiAudio/) to the
 - Select Plugin.MauiAudio
 
 ## Init
+
 In CreateMauiApp()[MauiProgram.cs]
 
 #### Version ≥ 1.0.3：
@@ -27,6 +28,7 @@ using MauiAudio;
 
 builder.UseMauiAudio()
 ```
+
 #### Version < 1.0.3:
 
 ```c#
@@ -85,6 +87,7 @@ public class MainActivity : MauiAppCompatActivity,IAudioActivity
     }
 }
 ```
+
 ## Usage
 
 ```c#
@@ -104,13 +107,15 @@ public class MediaPlay
     {
         public string Name { get; set; }
         public string Author { get; set; }
-        public string URL { get; set; } # URL is must
+        // URL or Stream is must
+        public string URL { get; set; }
+        public Stream Stream { get; set; }
         public string Image { get; set; }
     }
 
 MediaPlay media=new(){...};
 await audioService.InitializeAsync(media);
-# play 
+# play
 # position is double (second)
 await InternalPlayAsync(position);
 # pause
@@ -167,8 +172,6 @@ public interface INativeAudioService
     event EventHandler PlayPrevious;
 }
 ```
-
-
 
 ### version<1.0.6
 

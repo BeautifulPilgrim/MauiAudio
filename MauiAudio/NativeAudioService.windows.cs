@@ -6,7 +6,6 @@ namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
-    string _uri;
     MediaPlayer mediaPlayer;
 
     public bool IsPlaying => mediaPlayer != null
@@ -70,7 +69,7 @@ public class NativeAudioService : INativeAudioService
     }
     private MediaPlaybackItem mediaPlaybackItem(MediaPlay media)
     {
-        var mediaItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(media.URL)));
+        var mediaItem = new MediaPlaybackItem(media.Stream == null ? MediaSource.CreateFromUri(new Uri(media.URL)) : MediaSource.CreateFromStream(media.Stream?.AsRandomAccessStream(),string.Empty));
         var props = mediaItem.GetDisplayProperties();
         props.Type = MediaPlaybackType.Music;
         if (media.Name != null) props.MusicProperties.Title = media.Name;
@@ -82,8 +81,6 @@ public class NativeAudioService : INativeAudioService
     }
     public async Task InitializeAsync(MediaPlay media)
     {
-        _uri = media.URL;
-
         if (mediaPlayer == null)
         {
             mediaPlayer = new MediaPlayer

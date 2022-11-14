@@ -26,6 +26,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\drawable\music.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Update="NativeAudioService.macios.cs">
 	    <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
 	  </Compile>
@@ -51,5 +55,8 @@
 	<ItemGroup>
 	  <Folder Include="Platforms\iOS\" />
 	  <Folder Include="Platforms\MacCatalyst\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <MauiImage Include="Platforms\Android\Resources\drawable\music.png" />
 	</ItemGroup>
 </Project>
