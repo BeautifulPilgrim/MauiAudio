@@ -9,5 +9,15 @@ public partial class MainPage : ContentPage
 		InitializeComponent();
 		BindingContext = vm;
 	}
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+		viewModel.timer.Start();
+    }
+    protected override void OnDisappearing()
+    {
+        viewModel.timer.Stop();
+        base.OnDisappearing();
+    }
 }
 

@@ -10,8 +10,14 @@
             Padding="30,0"
             VerticalOptions="Center">
             <Entry Text="{Binding Url}"/>
+            <Label Text="{Binding CurrentTime}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ChangeTimeCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
             <Button Text="Start" Command="{Binding PlayCommand}"/>
             <Button Text="Play in Stream" Command="{Binding PlayInStreamCommand}"/>
+            <Button Text="Stop Play" Command="{Binding StopPlayCommand}"/>
         </VerticalStackLayout>
     </ScrollView>
 

@@ -118,14 +118,18 @@ public partial class PlayerService:ObservableObject
 
     private async Task InternalPlayAsync(double position = 0)
     {
-        var canPlay = Connectivity.Current.NetworkAccess==NetworkAccess.Internet?true:false;
+        //var canPlay = Connectivity.Current.NetworkAccess==NetworkAccess.Internet?true:false;
 
-        if (!canPlay)
-        {
-            return;
-        }
+        //if (!canPlay)
+        //{
+        //    return;
+        //}
 
         await audioService.PlayAsync(position);
         IsPlaying = true;
+    }
+    public async Task dispose()
+    {
+        await audioService.DisposeAsync();
     }
 }

@@ -52,10 +52,10 @@
 		<Compile Remove="**\windows\**\*.cs" />
 		<None Include="**\windows\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 	</ItemGroup>
-	<ItemGroup>
+	<!--<ItemGroup>
 	  <Folder Include="Platforms\iOS\" />
 	  <Folder Include="Platforms\MacCatalyst\" />
-	</ItemGroup>
+	</ItemGroup>-->
 	<ItemGroup>
 	  <MauiImage Include="Platforms\Android\Resources\drawable\music.png" />
 	</ItemGroup>

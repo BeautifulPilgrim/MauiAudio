@@ -78,8 +78,8 @@ public class NativeAudioService : INativeAudioService
 
     public Task DisposeAsync()
     {
-        instance.Binder?.Dispose();
-        return Task.CompletedTask;
+        instance.Binder?.GetMediaPlayerService().Stop();
+        return Task.CompletedTask;  
     }
 
     public async Task InitializeAsync(MediaPlay media)
