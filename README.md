@@ -51,15 +51,11 @@ public void Init()
 
 public void PlayMedia(string url)
 {
-
-
     audioService.LaunchMedia(new MediaContent(url));
 }
 
 public void PlayPlaylist(string url)
 {
-    var audioService = this.GetMauiAudioService();
-
     var playlist = new List<MediaContent>
                 {
                     new MediaContent(url),
