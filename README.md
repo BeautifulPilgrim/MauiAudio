@@ -46,7 +46,7 @@ use MediaPlay:
 private INativeAudioService audioService;
 public void Init()
 {
-    audioService = this.GetMauiAudioService();
+    audioService = (this as VisualElement).GetMauiAudioService();
 }
 
 public void PlayMedia(string url)
