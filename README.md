@@ -10,38 +10,14 @@ An Audio Plugin in MAUI with native control.
 
 A code novice, please forgive me if the documentation or code is not standardized. If you can help improve it, I would be very grateful!
 
-## Installation
-
-Add the [NuGet package](https://www.nuget.org/packages/Plugin.MauiAudio/) to the projects you want to use it in.
-
-- Select the Browse tab, search for Plugin.MauiAudio
-- Select Plugin.MauiAudio
-
 ## Init
 
 In CreateMauiApp()[MauiProgram.cs]
-
-#### Version ≥ 1.0.3：
 
 ```c#
 using MauiAudio;
 
 builder.UseMauiAudio()
-```
-
-#### Version < 1.0.3:
-
-```c#
-#if WINDOWS
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Windows.NativeAudioService>();
-#elif ANDROID
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.Android.NativeAudioService>();
-#elif MACCATALYST
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.MacCatalyst.NativeAudioService>();
-        builder.Services.TryAddSingleton< Platforms.MacCatalyst.ConnectivityService>();
-#elif IOS
-        builder.Services.TryAddSingleton<MauiAudio.INativeAudioService, MauiAudio.Platforms.iOS.NativeAudioService>();
-#endif
 ```
 
 ### Platform/Android
@@ -57,162 +33,98 @@ MainActivity.cs
 ```c#
 using Android.Content;
 using MauiAudio.Platforms.Android;
-using MauiAudio.Platforms.Android.CurrentActivity;
 
-public class MainActivity : MauiAppCompatActivity,IAudioActivity
+public class MainActivity : MauiAudioActivity
 {
-    MediaPlayerServiceConnection mediaPlayerServiceConnection;
-
-    public MediaPlayerServiceBinder Binder { get; set; }
-
-    public event StatusChangedEventHandler StatusChanged;
-    public event CoverReloadedEventHandler CoverReloaded;
-    public event PlayingEventHandler Playing;
-    public event BufferingEventHandler Buffering;
-
-    protected override void OnCreate(Bundle savedInstanceState)
-    {
-        base.OnCreate(savedInstanceState);
-        CrossCurrentActivity.Current.Init(this, savedInstanceState);
-        NotificationHelper.CreateNotificationChannel(ApplicationContext);
-        if (mediaPlayerServiceConnection == null)
-            InitializeMedia();
-    }
-
-    private void InitializeMedia()
-    {
-        mediaPlayerServiceConnection = new MediaPlayerServiceConnection(this);
-        var mediaPlayerServiceIntent = new Intent(ApplicationContext, typeof(MediaPlayerService));
-        BindService(mediaPlayerServiceIntent, mediaPlayerServiceConnection, Bind.AutoCreate);
-    }
 }
 ```
 
 ## Usage
+use MediaPlay:
 
 ```c#
-private readonly INativeAudioService audioService;
-public async Task PlayAsync(string url)
-    {
-        await audioService.InitializeAsync(url);
-        await audioService.PlayAsync(position);
-    }
-```
+private INativeAudioService audioService;
+public void Init()
+{
+    audioService = this.GetMauiAudioService();
+}
 
-or use MediaPlay:
+public void PlayMedia(string url)
+{
 
-```c#
-private readonly INativeAudioService audioService;
-public class MediaPlay
-    {
-        public string Name { get; set; }
-        public string Author { get; set; }
-        // URL or Stream is must
-        public string URL { get; set; }
-        public Stream Stream { get; set; }
-        public string Image { get; set; }
-    }
 
-MediaPlay media=new(){...};
-await audioService.InitializeAsync(media);
-# play
-# position is double (second)
-await InternalPlayAsync(position);
-# pause
-await audioService.PauseAsync();
+    audioService.LaunchMedia(new MediaContent(url));
+}
+
+public void PlayPlaylist(string url)
+{
+    var audioService = this.GetMauiAudioService();
+
+    var playlist = new List<MediaContent>
+                {
+                    new MediaContent(url),
+                    new MediaContent(url)
+                };
+
+    audioService.LaunchPlaylist(playlist, playlist.First());
+}
 ```
 
 ## Interface
 
-### Version ≥ 1.0.6
-
 ```c#
-public interface INativeAudioService
+public interface INativeAudioService : INotifyPropertyChanged, IDisposable
 {
-    Task InitializeAsync(string audioURI);
-    Task InitializeAsync(MediaPlay media);
-    Task PlayAsync(double position = 0);
+    public event EventHandler PlayingStarted;
+    public event EventHandler PlayingPaused;
+    public event EventHandler PlayingEnded;
+    public event EventHandler<MediaContent> PreviousMediaAccepted;
+    public event EventHandler<MediaContent> NextMediaAccepted;
+    public event EventHandler<TimeSpan> DurationAccepted;
+    public event EventHandler<double> BuffCoeffAccepted;
 
-    Task PauseAsync();
-    ///<Summary>
-    /// Set the current playback position (in seconds).
-    ///</Summary>
-    Task SetCurrentTime(double value);
+    public ObservableCollection<MediaContent> Playlist { get; }
 
-    Task DisposeAsync();
-    ///<Summary>
-    /// Gets a value indicating whether the currently loaded audio file is playing.
-    ///</Summary>
-    bool IsPlaying { get; }
-    ///<Summary>
-    /// Gets the current position of audio playback in seconds.
-    ///</Summary>
-    double CurrentPosition { get; }
-    ///<Summary>
-    /// Gets the length of audio in seconds.
-    ///</Summary>
-    double Duration { get; }
-    ///<Summary>
-    /// Gets or sets the playback volume 0 to 1 where 0 is no-sound and 1 is full volume.
-    ///</Summary>
-    double Volume { get; set; }
-    /// <summary>
-    /// Gets or sets the playback volume muted. false means not mute; true means mute.
-    /// </summary>
-    bool Muted { get; set; }
+    public MediaContent MediaPrevious { get; }
+    public MediaContent MediaCurrent { get; }
+    public MediaContent MediaNext { get; }
 
-    ///<Summary>
-    /// Gets or sets the balance left/right: -1 is 100% left : 0% right, 1 is 100% right : 0% left, 0 is equal volume left/right.
-    ///</Summary>
-    double Balance { get; set; }
+    public double Volume { get; set; }
+    public double Balance { get; set; }
+    public bool Muted { get; set; }
 
-    event EventHandler<bool> IsPlayingChanged;
-    event EventHandler PlayEnded;
-    event EventHandler PlayNext;
-    event EventHandler PlayPrevious;
+    public abstract bool IsPlaying { get; }
+    public abstract double BufferedCoeff { get; }
+    public abstract TimeSpan Duration { get; }
+    public abstract bool TryGetPosition(out TimeSpan position);
+
+    public bool LaunchPlaylist<T>(List<T> playlist, MediaContent currentMedia, TimeSpan? position = null) where T : MediaContent;
+    public bool LaunchPlaylist(List<MediaContent> playlist, MediaContent currentMedia, TimeSpan? position = null);
+    public bool LaunchMedia(MediaContent media, TimeSpan? position = null);
+
+    public abstract void Play();
+    public abstract void Pause();
+    public abstract void Stop();
+    public abstract void SeekTo(TimeSpan position);
+    public abstract void Next();
+    public abstract void Previous();
+
+    public bool Shuffled { get; set; }
+    public abstract bool LoopMedia { get; set; }
 }
 ```
-
-### version<1.0.6
-
-```c#
-public interface INativeAudioService
-{
-    Task InitializeAsync(string audioURI);
-    Task InitializeAsync(MediaPlay media);
-    Task PlayAsync(double position = 0);
-
-    Task PauseAsync();
-
-    Task SetMuted(bool value);
-
-    Task SetVolume(int value);
-
-    Task SetCurrentTime(double value);
-
-    ValueTask DisposeAsync();
-
-    bool IsPlaying { get; }
-
-    double CurrentPosition { get; }
-    double Duration { get; }
-
-    event EventHandler<bool> IsPlayingChanged;
-    event EventHandler PlayEnded;
-    event EventHandler PlayNext;
-    event EventHandler PlayPrevious;
-}
-```
-
 ## Notify
 
 If you want to process the player's previous or next song:(only Android and Windows available now), preprocess the four EventHandlers.
 
 ```c#
-    event EventHandler<bool> IsPlayingChanged;
-    event EventHandler PlayEnded;
-    event EventHandler PlayNext;
-    event EventHandler PlayPrevious;
+    public event EventHandler PlayingStarted;
+    public event EventHandler PlayingPaused;
+    public event EventHandler PlayingEnded;
+    public event EventHandler<MediaContent> PreviousMediaAccepted;
+    public event EventHandler<MediaContent> NextMediaAccepted;
+    public event EventHandler<TimeSpan> DurationAccepted;
+    public event EventHandler<double> BuffCoeffAccepted;
 ```
 
 ## Sample
