@@ -17,9 +17,9 @@ public partial class PlayerService:ObservableObject
     public event EventHandler NewEpisodeAdded;
     public event EventHandler IsPlayingChanged;
 
-    public PlayerService(INativeAudioService audioService)
+    public PlayerService()
     {
-        this.audioService = audioService;
+        this.audioService = NativeAudioService.Current;
         PlayList = new List<MediaPlay>();
         audioService.PlayNext += AudioService_PlayNext;
         audioService.PlayPrevious += AudioService_PlayPrevious;

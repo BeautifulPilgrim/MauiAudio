@@ -2,6 +2,7 @@
 
 public interface INativeAudioService
 {
+    public static INativeAudioService Current;
     Task InitializeAsync(string audioURI);
     Task InitializeAsync(MediaPlay media);
     Task PlayAsync(double position = 0);

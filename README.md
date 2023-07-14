@@ -18,10 +18,15 @@ Add the [NuGet package](https://www.nuget.org/packages/Plugin.MauiAudio/) to the
 - Select Plugin.MauiAudio
 
 ## Init
-
-In CreateMauiApp()[MauiProgram.cs]
+#### Version ≥ 1.2.2 
+No Need init！
+Directly using it!
+```c#
+var audioService = NativeAudioService.Current;
+```
 
 #### Version ≥ 1.0.3：
+In CreateMauiApp()[MauiProgram.cs]
 
 ```c#
 using MauiAudio;
@@ -30,6 +35,7 @@ builder.UseMauiAudio()
 ```
 
 #### Version < 1.0.3:
+In CreateMauiApp()[MauiProgram.cs]
 
 ```c#
 #if WINDOWS
@@ -123,6 +129,15 @@ await audioService.PauseAsync();
 ```
 
 ## Interface
+### Version ≥ 1.2.2
+
+```c#
+public interface INativeAudioService
+{
+    public static INativeAudioService Current;
+    ······
+}
+```
 
 ### Version ≥ 1.0.6
 

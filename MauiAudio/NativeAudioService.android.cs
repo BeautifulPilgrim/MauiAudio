@@ -8,6 +8,8 @@ namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
+    static NativeAudioService current;
+    public static INativeAudioService Current => current ??= new NativeAudioService();
     IAudioActivity instance;
     double volume = 1;
     double balance = 0;

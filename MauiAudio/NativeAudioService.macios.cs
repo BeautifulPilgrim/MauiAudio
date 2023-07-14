@@ -6,6 +6,8 @@ namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
+    static NativeAudioService current;
+    public static INativeAudioService Current => current ??= new NativeAudioService();
     //AVPlayer avPlayer;
     AVAudioPlayer avPlayer;
     float volume = 1;

@@ -6,6 +6,8 @@ namespace MauiAudio;
 
 public class NativeAudioService : INativeAudioService
 {
+    static NativeAudioService current;
+    public static INativeAudioService Current => current ??= new NativeAudioService();
     MediaPlayer mediaPlayer;
 
     public bool IsPlaying => mediaPlayer != null
