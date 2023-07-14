@@ -19,6 +19,8 @@
 		<PackageProjectUrl>https://github.com/BeautifulPilgrim/MauiAudio</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/BeautifulPilgrim/MauiAudio</RepositoryUrl>
 		<Description>MauiAudio-Cross platform audio plugin for MAUI</Description>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -58,5 +60,15 @@
 	</ItemGroup>-->
 	<ItemGroup>
 	  <MauiImage Include="Platforms\Android\Resources\drawable\music.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>
