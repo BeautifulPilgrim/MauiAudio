@@ -49,7 +49,7 @@ public static class NotificationHelper
 
         var name = "Local Notifications";
         var description = "The count from MainActivity.";
-        var channel = new NotificationChannel(CHANNEL_ID, name, NotificationImportance.Default)
+        var channel = new NotificationChannel(CHANNEL_ID, name, NotificationImportance.Min)
         {
             Description = description
         };
