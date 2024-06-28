@@ -13,5 +13,6 @@ namespace MauiAudio
         public string URL { get; set; }
         public Stream Stream { get; set; }
         public string Image { get; set; }
+        public byte[] ImageBytes { get; set; }
     }
 }

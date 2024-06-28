@@ -33,7 +33,8 @@ public partial class MainPageViewModel
     async void PlayInStream()
     {
         var stream = await FileSystem.OpenAppPackageFileAsync("sample.mp3");
-        await playerService.PlayAsync(new() { Stream=stream, Name = "TempUrl", Author = "TempAuthor" });
+        var img = await GetCoverImage();
+        await playerService.PlayAsync(new() { Stream=stream, Name = "TempUrl", Author = "TempAuthor", ImageBytes = img });
     }
 
     private void OnTimeChanging(object sender, EventArgs e)
@@ -55,5 +56,14 @@ public partial class MainPageViewModel
     async void StopPlay()
     {
         await playerService.dispose();
+    }
+    async Task<byte[]>? GetCoverImage(string filePath = null)
+    {
+        using var imageStream = await FileSystem.OpenAppPackageFileAsync("shadow.png");
+        
+        using var memStream = new MemoryStream();
+        imageStream.CopyTo(memStream);
+
+        return memStream.ToArray();
     }
 }

@@ -1,12 +1,12 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.Media;
+using Android.Media.Session;
 using Android.Net;
 using Android.Net.Wifi;
 using Android.OS;
-using Android.Media.Session;
 using AndroidNet = Android.Net;
-using Android.Graphics;
 
 namespace MauiAudio.Platforms.Android;
 
@@ -104,7 +104,7 @@ public class MediaPlayerService : Service,
     protected virtual void OnPlayingChanged(bool e)
     {
         PlayingChanged?.Invoke(this, e);
-        IsPlayingChanged?.Invoke(this,e);
+        IsPlayingChanged?.Invoke(this, e);
     }
 
     protected virtual void OnCoverReloaded(EventArgs e)
@@ -279,8 +279,8 @@ public class MediaPlayerService : Service,
         set
         {
             cover = value as Bitmap;
-            if(cover!=null)
-            OnCoverReloaded(EventArgs.Empty);
+            if (cover != null)
+                OnCoverReloaded(EventArgs.Empty);
         }
     }
 
@@ -327,18 +327,18 @@ public class MediaPlayerService : Service,
                 MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
 
                 AndroidNet.Uri uri;
-                if(mediaPlay.Stream!= null)
+                if (mediaPlay.Stream != null)
                 {
-                    var fileStream = File.Create(FileSystem.Current.CacheDirectory+"temp.wav");
+                    var fileStream = File.Create(FileSystem.Current.CacheDirectory + "temp.wav");
                     mediaPlay.Stream.CopyTo(fileStream);
                     fileStream.Close();
-                    uri = AndroidNet.Uri.Parse( FileSystem.Current.CacheDirectory + "temp.wav");
+                    uri = AndroidNet.Uri.Parse(FileSystem.Current.CacheDirectory + "temp.wav");
                 }
                 else
                 {
                     uri = AndroidNet.Uri.Parse(mediaPlay.URL);
                 }
-				await mediaPlayer.SetDataSourceAsync(ApplicationContext, uri);
+                await mediaPlayer.SetDataSourceAsync(ApplicationContext, uri);
 
                 //If Uri Scheme is not set its a local file so there's no metadata to fetch
                 if (!string.IsNullOrWhiteSpace(uri.Scheme))
@@ -366,6 +366,10 @@ public class MediaPlayerService : Service,
                 if (!string.IsNullOrEmpty(mediaPlay.Image))
                 {
                     Cover = await GetImageBitmapFromUrl(mediaPlay.Image);
+                }
+                else if (mediaPlay.ImageBytes is not null)
+                {
+                    Cover = await GetImageBitmapFromUrlBytesAsync(mediaPlay.ImageBytes);
                 }
                 else if (metaRetriever != null && !string.IsNullOrWhiteSpace(metaRetriever.ExtractMetadata(MetadataKey.Album)))
                 {
@@ -403,6 +407,17 @@ public class MediaPlayerService : Service,
 
         return imageBitmap;
     }
+    async Task<Bitmap> GetImageBitmapFromUrlBytesAsync(byte[] imageBytes)
+    {
+        Bitmap imageBitmap = null;
+        if (imageBytes != null && imageBytes.Length > 0)
+        {
+            
+            imageBitmap = await BitmapFactory.DecodeByteArrayAsync(imageBytes, 0, imageBytes.Length);
+        }
+
+        return imageBitmap;
+    }
     public async Task Seek(int position)
     {
         await Task.Run(() =>
@@ -416,7 +431,7 @@ public class MediaPlayerService : Service,
 
     public async Task PlayNext()
     {
-        TaskPlayNext?.Invoke(this,EventArgs.Empty);
+        TaskPlayNext?.Invoke(this, EventArgs.Empty);
         //if (mediaPlayer != null)
         //{
         //    mediaPlayer.Reset();
@@ -570,7 +585,7 @@ public class MediaPlayerService : Service,
         if (metaRetriever != null)
         {
             builder
-            .PutString(MediaMetadata.MetadataKeyAlbum,metaRetriever.ExtractMetadata(MetadataKey.Album))
+            .PutString(MediaMetadata.MetadataKeyAlbum, metaRetriever.ExtractMetadata(MetadataKey.Album))
             .PutString(MediaMetadata.MetadataKeyArtist, mediaPlay.Author ?? metaRetriever.ExtractMetadata(MetadataKey.Artist))
             .PutString(MediaMetadata.MetadataKeyTitle, mediaPlay.Name ?? metaRetriever.ExtractMetadata(MetadataKey.Title));
         }
