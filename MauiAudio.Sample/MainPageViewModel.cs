@@ -63,7 +63,7 @@ public partial class MainPageViewModel
         
         using var memStream = new MemoryStream();
         imageStream.CopyTo(memStream);
-
+        //doing return File.ReadAllBytes(IMAGE_FULL_PATH_AS_STRING); Will work as well
         return memStream.ToArray();
     }
 }
