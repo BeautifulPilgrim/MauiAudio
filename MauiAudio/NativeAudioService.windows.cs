@@ -77,10 +77,28 @@ public class NativeAudioService : INativeAudioService
         if (media.Name != null) props.MusicProperties.Title = media.Name;
         if (media.Author != null) props.MusicProperties.Artist = media.Author;
         if (media.Image != null)
+        {
             props.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(media.Image));
+        }
+        else if(media.ImageBytes != null)
+        {
+            props.Thumbnail = ConvertToRandomAccessStreamReference(media.ImageBytes);
+        }
+
         mediaItem.ApplyDisplayProperties(props);
         return mediaItem;
     }
+
+    private RandomAccessStreamReference ConvertToRandomAccessStreamReference(byte[] imageData)
+    {
+        using var stream = new MemoryStream(imageData);
+        var randomAccessStream = new InMemoryRandomAccessStream();
+        var writer = new DataWriter(randomAccessStream.GetOutputStreamAt(0));
+        writer.WriteBytes(imageData);
+        writer.StoreAsync().GetResults();
+        return RandomAccessStreamReference.CreateFromStream(randomAccessStream);
+    }
+
     public async Task InitializeAsync(MediaPlay media)
     {
         if (mediaPlayer == null)
