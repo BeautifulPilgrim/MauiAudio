@@ -34,7 +34,7 @@ public partial class MainPageViewModel
     {
         var stream = await FileSystem.OpenAppPackageFileAsync("sample.mp3");
         var img = await GetCoverImage();
-        await playerService.PlayAsync(new() { Stream=stream, Name = "TempUrl", Author = "TempAuthor", ImageBytes = img });
+        await playerService.PlayAsync(new() { Stream=stream, Name = "TempUrl", Author = "TempAuthor", ImageBytes = img, DurationInMs = 188000 });
     }
 
     private void OnTimeChanging(object sender, EventArgs e)
